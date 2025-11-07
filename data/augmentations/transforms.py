@@ -1,5 +1,7 @@
 from torchvision import transforms
 
+# modify images so that i can get more use out of small dataset
+
 train_transform = transforms.Compose([
     transforms.RandomRotation(30),
     transforms.RandomHorizontalFlip(p=0.5),
