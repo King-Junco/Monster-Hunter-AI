@@ -74,10 +74,11 @@ class MonsterHunterCNN(nn.Module):
         )
         self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(256 * 32 * 32, 1024), # (256 channels, 32x32 feature map)
+           #nn.Linear(256 * 32 * 32, 1024), 
+            nn.Linear(256 * 32 * 32, 256), 
             nn.ReLU(),
             nn.Dropout(0.5),
-            nn.Linear(1024, num_classes)
+            nn.Linear(256, num_classes)
         )
 
     def forward(self, x):
@@ -101,7 +102,7 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, num_epoch
             optimizer.zero_grad()
             outputs = model(inputs)
             loss = criterion(outputs, labels)
-            loss.backward()  # ADDED - calculates gradients
+            loss.backward()  
             optimizer.step()
 
             running_loss += loss.item()
@@ -147,23 +148,27 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, num_epoch
 if __name__ == "__main__":
     # Hyperparameters
     num_classes = 15  # Number of Classes in dataset
-    batch_size = 32
-    learning_rate = 0.001
-    num_epochs = 50
+    batch_size = 16 #default 32
+    learning_rate = 0.0005 #default 0.001
+    num_epochs = 200 #default 50
 
     # Get device
     device = get_device()
 
-    # Load dataset paths and labels
+    # Directory (point to ../data/processed)
+    data_dir = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        'data',
+        'processed'
+    )
 
-    # Directory
-    data_dir = 'data/processed'
+    print(f'Using data directory: {data_dir}')
 
     # Class names 
     class_names = [
-        'Amphibian', 'Bird Wyvern', 'Brute Wyvern', 'Carapaceons', 'Cephalopods',
+        'Amphibian', 'Bird Wyverns', 'Brute Wyverns', 'Carapaceons', 'Cephalopods',
         'Constructs', 'Elder Dragons', 'Fanged Beasts', 'Fanged Wyverns', 'Flying Wyverns',
-        'Leviathans', 'Lynians', 'Neopterons', 'Piscine Wyverns', 'Temnocerans'
+        'Leviathans', 'Lynian', 'Neopterons', 'Piscine Wyverns', 'Temnocerans'
     ]
 
     # Collect all image paths and labels
