@@ -19,11 +19,6 @@ train_transform = transforms.Compose([
         hue=0.1,
     ),
 
-    # Added after Run 6
-    transforms.RandomPerspective(distortion_scale=0.3, p=0.5),
-    transforms.GaussianBlur(kernel_size= 3, p =0.3), # Blur images with 30% probability
-    transforms.RandomErasing(p=0.2), # Randomly erase parts of image with 0% probability
-    # End of additions
 
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406],

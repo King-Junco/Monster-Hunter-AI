@@ -150,7 +150,7 @@ if __name__ == "__main__":
     num_classes = 15  # Number of Classes in dataset
     batch_size = 16 #default 32
     learning_rate = 0.0005 #default 0.001
-    num_epochs = 200 #default 50
+    num_epochs = 100 #default 50 (100 seems to get best results)
 
     # Get device
     device = get_device()
@@ -166,8 +166,8 @@ if __name__ == "__main__":
 
     # Class names 
     class_names = [
-        'Amphibian', 'Bird Wyverns', 'Brute Wyverns', 'Carapaceons', 'Cephalopods',
-        'Constructs', 'Elder Dragons', 'Fanged Beasts', 'Fanged Wyverns', 'Flying Wyverns',
+        'Amphibian', 'Bird Wyverns', 'Brute Wyverns', 'Carapaceons',
+        'Elder Dragons', 'Fanged Beasts', 'Fanged Wyverns', 'Flying Wyverns',
         'Leviathans', 'Lynian', 'Neopterons', 'Piscine Wyverns', 'Temnocerans'
     ]
 

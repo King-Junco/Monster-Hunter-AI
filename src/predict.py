@@ -14,9 +14,9 @@ from data.augmentations.transforms import val_transform
 
 # Class names 
 class_names = [
-        'Amphibian', 'Bird Wyvern', 'Brute Wyvern', 'Carapaceons', 'Cephalopods',
-        'Constructs', 'Elder Dragons', 'Fanged Beasts', 'Fanged Wyverns', 'Flying Wyverns',
-        'Leviathans', 'Lynians', 'Neopterons', 'Piscine Wyverns', 'Temnocerans'
+        'Amphibian', 'Bird Wyverns', 'Brute Wyverns', 'Carapaceons',
+        'Elder Dragons', 'Fanged Beasts', 'Fanged Wyverns', 'Flying Wyverns',
+        'Leviathans', 'Lynian', 'Neopterons', 'Piscine Wyverns', 'Temnocerans'
         ]
 
 def predict_image(model, image_path, device):
