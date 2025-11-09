@@ -2,6 +2,7 @@
 main.py — portable PyTorch entry point for NVIDIA (CUDA) and AMD (DirectML)
 """
 # Allow script to see data folder 
+from email.policy import default
 import sys, os 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -147,10 +148,10 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, num_epoch
 # Example usage:
 if __name__ == "__main__":
     # Hyperparameters
-    num_classes = 15  # Number of Classes in dataset
+    num_classes = 13  # Number of Classes in dataset
     batch_size = 16 #default 32
     learning_rate = 0.0005 #default 0.001
-    num_epochs = 100 #default 50 (100 seems to get best results)
+    num_epochs = 200  # default 50 (100 seems to get best results)
 
     # Get device
     device = get_device()
