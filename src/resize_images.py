@@ -15,7 +15,7 @@ def resize_and_pad(img, target_size=(256, 256)):
     return new_img
 
 
-def process_dataset(input_dir='D:\\GitFork\\Monster-Hunter-AI\\data\\raw', output_dir='D:\\GitFork\\Monster-Hunter-AI\\data\\processed', size=(256, 256)):
+def process_dataset(input_dir='D:\\Github-Desktop\\Monster-Hunter-AI\\data\\raw', output_dir='D:\\Github-Desktop\\Monster-Hunter-AI\\data\\processed', size=(256, 256)):
     input_path = Path(input_dir)
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)

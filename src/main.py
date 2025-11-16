@@ -54,8 +54,9 @@ def load_model(model, path="model.pth", device=device):
     model.to(device)
     print(f"📂 Model loaded from {path} to {device}")
     return model
+
 '''
-Orginal CNN Model (run 1-10)
+# Orginal CNN Model (run 1-10)
 # Start CNN architecture training here
 class MonsterHunterCNN(nn.Module):
     def __init__(self, num_classes):
@@ -135,6 +136,8 @@ class MonsterHunterCNN(nn.Module):
         x = self.classifier(x)
         return x
 
+
+
 def train_model(model, train_loader, val_loader, criterion, optimizer, num_epochs, device):
     best_val_acc = 0.0
 
@@ -199,7 +202,7 @@ if __name__ == "__main__":
     num_classes = 13  # Number of Classes in dataset
     batch_size = 16 #default 32
     learning_rate = 0.0005 #default 0.001
-    num_epochs = 100  # default 50 (100 seems to get best results)
+    num_epochs = 500  # default 50 (100 seems to get best results)
 
     # Get device
     device = get_device()
