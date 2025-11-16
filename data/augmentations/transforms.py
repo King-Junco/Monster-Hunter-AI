@@ -5,7 +5,7 @@ from torchvision import transforms
 train_transform = transforms.Compose([
     transforms.RandomRotation(30), # defualt 30
     transforms.RandomHorizontalFlip(p=0.5),
-    transforms.RandomVerticalFlip(p=0.5),
+    #transforms.RandomVerticalFlip(p=0.5),
     transforms.RandomAffine(
         degrees=0,
         translate=(0.1, 0.1), # default (0.1, 0.1)
