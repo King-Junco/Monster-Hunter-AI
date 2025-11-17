@@ -139,7 +139,7 @@ class MonsterHunterResNet18_Latest(nn.Module):
         
         
         # Freeze early Layers
-        for param in list(self.model.parameters())[:-7]: # defualy -10
+        for param in list(self.model.parameters())[:-10]: # defualy -10
             param.requires_grad = False
         '''
         # Freeze all layers except final layer
@@ -151,7 +151,7 @@ class MonsterHunterResNet18_Latest(nn.Module):
         self.model.fc = nn.Sequential(
             nn.Linear(num_features, 256),
             nn.ReLU(),
-            nn.Dropout(0.5), 
+            nn.Dropout(0.3), 
             nn.Linear(256, num_classes)
         )
     
@@ -222,7 +222,7 @@ if __name__ == "__main__":
     # Hyperparameters
     num_classes = 13  # Number of Classes in dataset
     batch_size = 16 #default 32
-    learning_rate = 0.001 #default 0.001
+    learning_rate = 0.0001 #default 0.001
     num_epochs = 100  # default 50 (100 seems to get best results for non-transfer learning)
 
     # Get device
