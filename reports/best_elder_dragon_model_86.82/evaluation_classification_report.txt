@@ -1,0 +1,19 @@
+Validation Accuracy: 86.82%
+ROC AUC Score: 0.769
+
+Classification Report:
+                  precision    recall  f1-score   support
+
+Not Elder Dragon      0.883     0.972     0.926       109
+    Elder Dragon      0.667     0.300     0.414        20
+
+        accuracy                          0.868       129
+       macro avg      0.775     0.636     0.670       129
+    weighted avg      0.850     0.868     0.846       129
+
+
+Confusion Matrix:
+True Negatives: 106
+False Positives: 3
+False Negatives: 14
+True Positives: 6

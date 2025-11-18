@@ -1,0 +1,39 @@
+Validation Accuracy: 52.71%
+
+Classification Report:
+                 precision    recall  f1-score   support
+
+      Amphibian      0.000     0.000     0.000         3
+   Bird Wyverns      0.600     0.529     0.562        17
+  Brute Wyverns      0.250     0.091     0.133        11
+    Carapaceons      0.750     0.750     0.750         4
+  Elder Dragons      0.619     0.619     0.619        21
+  Fanged Beasts      0.600     0.500     0.545        12
+ Fanged Wyverns      0.000     0.000     0.000         8
+ Flying Wyverns      0.519     0.844     0.643        32
+     Leviathans      0.417     0.500     0.455        10
+         Lynian      0.333     0.500     0.400         2
+     Neopterons      0.375     0.750     0.500         4
+Piscine Wyverns      0.000     0.000     0.000         3
+    Temnocerans      0.000     0.000     0.000         2
+
+       accuracy                          0.527       129
+      macro avg      0.343     0.391     0.354       129
+   weighted avg      0.458     0.527     0.477       129
+
+
+ROC AUC Scores (One-vs-Rest):
+Amphibian: 0.759
+Bird Wyverns: 0.730
+Brute Wyverns: 0.712
+Carapaceons: 0.994
+Elder Dragons: 0.762
+Fanged Beasts: 0.872
+Fanged Wyverns: 0.811
+Flying Wyverns: 0.843
+Leviathans: 0.920
+Lynian: 0.894
+Neopterons: 0.896
+Piscine Wyverns: 0.894
+Temnocerans: 0.787
+Micro-average: 0.856
