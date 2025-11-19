@@ -40,6 +40,86 @@ class MonsterHunterResNet18_Latest(nn.Module):
     def forward(self, x):
         return self.model(x)
 
+# Legacy CNN Architecture (from your original main.py)
+class MonsterHunterCNN(nn.Module):
+    """Original CNN model (runs 1-10)"""
+    def __init__(self, num_classes):
+        super().__init__()
+        self.features = nn.Sequential(
+            # first conv layer
+            nn.Conv2d(3, 64, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2), # 256 -> 128
+            # second conv layer
+            nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2), # 128 -> 64
+            # third conv layer
+            nn.Conv2d(128, 256, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2), # 64 -> 32
+        )
+        self.classifier = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(256 * 32 * 32, 256), 
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            nn.Linear(256, num_classes)
+        )
+
+    def forward(self, x):
+        x = self.features(x)
+        return self.classifier(x)
+
+# Improved CNN with BatchNorm (commented version from main.py)
+class MonsterHunterCNN_BatchNorm(nn.Module):
+    """CNN with BatchNorm and Global Average Pooling"""
+    def __init__(self, num_classes):
+        super().__init__()
+
+        self.features = nn.Sequential(
+            # Block 1
+            nn.Conv2d(3, 32, kernel_size=3, padding=1),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),  # 256 -> 128
+
+            # Block 2
+            nn.Conv2d(32, 64, kernel_size=3, padding=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),  # 128 -> 64
+
+            # Block 3
+            nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            nn.BatchNorm2d(128),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),  # 64 -> 32
+
+            # Block 4
+            nn.Conv2d(128, 256, kernel_size=3, padding=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),  # 32 -> 16
+        )
+
+        # Global Average Pooling (reduces parameters drastically)
+        self.gap = nn.AdaptiveAvgPool2d((1, 1))
+
+        self.classifier = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(256, 128),
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            nn.Linear(128, num_classes)
+        )
+
+    def forward(self, x):
+        x = self.features(x)
+        x = self.gap(x)
+        x = self.classifier(x)
+        return x
+
 class ElderDragonClassifier(nn.Module):
     """Binary classifier from elder_dragon_Ai.py"""
     def __init__(self):
@@ -403,8 +483,21 @@ if __name__ == "__main__":
             model_dir = os.path.join(base_report_dir, model_name)
             os.makedirs(model_dir, exist_ok=True)
             
-            model = MonsterHunterResNet18_Latest(num_classes=13)
+            # Try to load and detect architecture
+            print("🔍 Detecting model architecture...")
             state_dict = torch.load(model_path, map_location=device, weights_only=False)
+            
+            # Check which architecture by looking at the keys
+            if any('model.conv1' in key for key in state_dict.keys()):
+                print("✅ Detected: ResNet18 (Transfer Learning)")
+                model = MonsterHunterResNet18_Latest(num_classes=13)
+            elif any('gap' in key for key in state_dict.keys()):
+                print("✅ Detected: CNN with BatchNorm and GAP")
+                model = MonsterHunterCNN_BatchNorm(num_classes=13)
+            else:
+                print("✅ Detected: Original CNN")
+                model = MonsterHunterCNN(num_classes=13)
+            
             model.load_state_dict(state_dict)
             model.to(device)
             print(f"✅ Loaded model from {model_path}")
@@ -452,4 +545,5 @@ if __name__ == "__main__":
     print("\n" + "="*60)
     print("✅ EVALUATION COMPLETE!")
     print("="*60)
-   
+    print(f"\n📁 All reports saved in '{base_report_dir}/' directory:")
+    
