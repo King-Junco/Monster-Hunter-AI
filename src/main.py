@@ -10,10 +10,12 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import torchvision.models as models
 from torch.utils.data import DataLoader
 from data.augmentations.transforms import train_transform, val_transform
 from data.dataset import MonsterHunterDataset
 from sklearn.model_selection import train_test_split
+from torchvision.models import ResNet18_Weights
 
 # 🔍 Step 1: Detect the best available device
 def get_device():
@@ -32,16 +34,6 @@ def get_device():
 
 device = get_device()
 
-# Example: placeholder model
-class DummyModel(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.fc = nn.Linear(10, 2)
-    
-    def forward(self, x):
-        return self.fc(x)
-
-model = DummyModel().to(device)
 
 # 🔄 Step 2: Example of saving and loading cross-device
 def save_model(model, path="model.pth"):
@@ -54,8 +46,9 @@ def load_model(model, path="model.pth", device=device):
     model.to(device)
     print(f"📂 Model loaded from {path} to {device}")
     return model
+
 '''
-Orginal CNN Model (run 1-10)
+# Orginal CNN Model (run 1-10)
 # Start CNN architecture training here
 class MonsterHunterCNN(nn.Module):
     def __init__(self, num_classes):
@@ -87,7 +80,7 @@ class MonsterHunterCNN(nn.Module):
         x = self.features(x)
         return self.classifier(x)
 '''
-
+'''
 class MonsterHunterCNN(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
@@ -134,6 +127,37 @@ class MonsterHunterCNN(nn.Module):
         x = self.gap(x)
         x = self.classifier(x)
         return x
+'''
+# Transfer Learning with ResNet18
+
+class MonsterHunterResNet18_Latest(nn.Module):
+    def __init__(self, num_classes):
+        super().__init__()
+        
+        # Use DEFAULT to get the most up-to-date weights
+        self.model = models.resnet18(weights=ResNet18_Weights.DEFAULT)
+        
+        
+        # Freeze early Layers
+        for param in list(self.model.parameters())[:-10]: # defualy -10
+            param.requires_grad = False
+        '''
+        # Freeze all layers except final layer
+        for param in self.model.parameters():
+            param.requires_grad = False
+        '''
+        # Replace Final Layer for our Classes
+        num_features = self.model.fc.in_features
+        self.model.fc = nn.Sequential(
+            nn.Linear(num_features, 256),
+            nn.ReLU(),
+            nn.Dropout(0.3), 
+            nn.Linear(256, num_classes)
+        )
+    
+    def forward(self, x):
+        return self.model(x)
+   
 
 def train_model(model, train_loader, val_loader, criterion, optimizer, num_epochs, device):
     best_val_acc = 0.0
@@ -198,8 +222,8 @@ if __name__ == "__main__":
     # Hyperparameters
     num_classes = 13  # Number of Classes in dataset
     batch_size = 16 #default 32
-    learning_rate = 0.0005 #default 0.001
-    num_epochs = 100  # default 50 (100 seems to get best results)
+    learning_rate = 0.0001 #default 0.001
+    num_epochs = 100  # default 50 (100 seems to get best results for non-transfer learning)
 
     # Get device
     device = get_device()
@@ -263,9 +287,10 @@ if __name__ == "__main__":
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
-
+    '''
     # Initialize model, criterion, and optimizer
-    model = MonsterHunterCNN(num_classes).to(device)
+    #model = MonsterHunterCNN(num_classes).to(device)
+    model = MonsterHunterResNet18(num_classes).to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
@@ -277,5 +302,34 @@ if __name__ == "__main__":
                 optimizer, 
                 num_epochs, 
                 device)
+    '''
+
+    # ResNet18 Transfer Learning
+    # Initialize model, criterion, and optimizer
+    print("🔄 Initializing ResNet18 with pretrained weights...")
+    model = MonsterHunterResNet18_Latest(num_classes)
+
+    # Force CPU for transfer learning (DirectML compatibility issue)
+    cpu_device = torch.device("cpu")
+    model = model.to(cpu_device)
+    print("✅ Model ready on CPU (transfer learning works best here)")
+
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay= 0.01) # added weight decay
+
+    print(f"🚀 Starting training for {num_epochs} epochs...")
+    print(f"📊 {len(train_paths)} training images, {len(val_paths)} validation images")
+    print("-" * 60)
+
+    # Train the model - pass cpu_device instead of device
+    train_model(model, 
+            train_loader, 
+            val_loader, 
+            criterion, 
+            optimizer, 
+            num_epochs, 
+            cpu_device)  # Use cpu_device here
+
+   
     # Save final model
     save_model(model, 'final_model.pth')
